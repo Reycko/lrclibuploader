@@ -1,5 +1,8 @@
 # LRCLibUploader
 
+> [!IMPORTANT]
+> This project will not be updated frequently, unless the LRCLib API changes or the program breaks.
+
 Easily upload lyrics to LRCLib.
 
 **Basic how-to:**
