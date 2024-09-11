@@ -31,7 +31,8 @@ async function main(): Promise<number> {
     challenge.prefix,
     challenge.target,
   );
-  prettyLog(`Solved challenge! Nonce: ${solvedChallenge.nonce}`);
+
+  prettyLog(`Solved challenge! Nonce: ${solvedChallenge.nonce}`, true);
 
   const challengeResult: string = `${solvedChallenge.prefix}:${solvedChallenge.nonce}`;
 

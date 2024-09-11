@@ -19,7 +19,7 @@ export function solve(prefix: string, target_hex: string): SolvedChallenge {
 
   console.log('');
   while (true) {
-    if (nonce % 100000 === 0) prettyLog(`Current nonce: ${nonce}`, true);
+    if (nonce % 100000 === 0) prettyLog(`Solver - Nonce (~100000): ${nonce}`, true);
     const input = `${prefix}${nonce}`;
     const hashed = crypto.createHash('sha256').update(input).digest();
     if (verify_nonce(hashed, target)) {

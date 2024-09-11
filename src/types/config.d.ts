@@ -8,7 +8,7 @@ export type SongData = {
 export type Config = {
   data: SongData;
   plainLyrics: string;
-  syncedLyrics: string;
+  syncedLyrics?: string;
 };
 
 export type ConfigResult = {
