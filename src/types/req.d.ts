@@ -16,4 +16,4 @@ export type PublishResponse = {
 export type ChallengeResponse = {
   prefix?: string;
   target?: string;
-}
+};
