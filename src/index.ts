@@ -1,21 +1,23 @@
-import { Solver } from './solver';
-import { Loader } from './loader';
+import * as Solver from './solver';
+import { load } from './loader';
 import { ConfigResult } from './types/config';
 import { exit } from 'node:process';
 import { Challenge, SolvedChallenge } from './types/challenge';
 import { PublishRequest, PublishResponse } from './types/req';
 import * as Constants from './consts';
+import c from 'ansi-colors';
+import { prettyLog, prettyError } from './print';
 
 async function main(): Promise<number> {
-  console.log('==LRCLIBUploader==');
-  console.log(`Version: ${Constants.VERSION.toString()}`);
-  const config: ConfigResult = Loader.load();
+  console.log(c.bold('LRCLIBUploader'));
+  prettyLog(`Version: ${c.blue(Constants.VERSION.toString())}`);
+  const config: ConfigResult = load();
   if (!config.success || !config.config) {
-    console.error('Problem loading config. Aborting.');
+    prettyError('Problem loading config. Aborting.');
     return 1;
   }
 
-  console.log('Requesting challenge.');
+  prettyLog('Requesting challenge.');
   const challenge: Challenge = (await (
     await fetch('https://lrclib.net/api/request-challenge', { method: 'POST' })
   ).json()) as Challenge;
@@ -25,12 +27,11 @@ async function main(): Promise<number> {
     return 1;
   }
 
-  console.log('Solving.');
   const solvedChallenge: SolvedChallenge = Solver.solve(
     challenge.prefix,
     challenge.target,
   );
-  console.log(`Solved challenge! Nonce: ${solvedChallenge.nonce}`);
+  prettyLog(`Solved challenge! Nonce: ${solvedChallenge.nonce}`);
 
   const challengeResult: string = `${solvedChallenge.prefix}:${solvedChallenge.nonce}`;
 
@@ -53,9 +54,9 @@ async function main(): Promise<number> {
   });
 
   if (res.ok) {
-    console.log('Uploaded!');
+    prettyLog('Uploaded!');
   } else {
-    console.log(
+    prettyError(
       `Non-OK response | Status code ${res.status} (${res.statusText}):`,
     );
     const text: string = await res.text();
@@ -64,6 +65,8 @@ async function main(): Promise<number> {
     } catch {
       console.log(text);
     }
+
+    return 1;
   }
 
   return 0;
