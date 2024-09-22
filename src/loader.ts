@@ -1,7 +1,9 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import { ConfigResult, SongData } from './types/config';
+import { ConfigResult, SongData } from '+/config';
 import { prettyError, prettyLog, prettyWarn } from './print';
+import { Lyrics } from '@/lyrics';
+import * as parser from './parser';
 
 function tryLoadFile(loc: fs.PathLike): Buffer | null {
   try {
@@ -12,8 +14,7 @@ function tryLoadFile(loc: fs.PathLike): Buffer | null {
 }
 
 export function load(from?: string): ConfigResult {
-  const fd =
-    typeof from === 'string' ? from : path.resolve(__dirname, '..', 'data');
+  const fd = from ? from : path.resolve(__dirname, '..', 'data');
   try {
     const rawData: Buffer | null = tryLoadFile(path.resolve(fd, 'data.json'));
     if (!rawData) {
@@ -28,28 +29,60 @@ export function load(from?: string): ConfigResult {
       path.resolve(fd, 'plain.txt'),
     );
     if (!plainLyricsRaw) {
-      throw new Error("Couldn't load plain.txt, make sure it exists.");
+      prettyError("Couldn't load plain.txt, make sure it exists.");
+      return {
+        success: false,
+      };
     }
 
-    const plainLyrics: string = plainLyricsRaw
-      .toString('utf-8')
-      .replace(/\r\n/g, '\n'); // remove CR from CRLF (Windows) line endings
+    const plainLyrics: Lyrics | null = parser.parseLyrics(
+      plainLyricsRaw.toString('utf-8').replaceAll('\r\n', '\n'), // remove CR from CRLF (Windows) line endings
+    );
 
-    prettyLog(`Plain text lyrics found: ${plainLyrics.split('\n')[0]}\n[...]`);
+    if (!plainLyrics) {
+      prettyError('Error while reading plain lyrics.');
+      return {
+        success: false,
+      };
+    } else {
+      const possibleBadLines: number = plainLyrics.syncedLines();
+      if (possibleBadLines) {
+        prettyWarn(
+          `Plain: Found ${possibleBadLines} possible synced lines that aren't meant to be.`,
+        );
+      }
+      prettyLog(
+        `Plain text lyrics found: ${plainLyrics.lyrics[0].string}\n[...]`,
+      );
+    }
 
     const syncedLyricsRaw: Buffer | null = tryLoadFile(
       path.resolve(fd, 'synced.txt'),
     );
 
-    let syncedLyrics: string | undefined;
-
     if (!syncedLyricsRaw) {
       prettyWarn('No synced lyrics.');
-      return { success: false };
-    } else {
-      syncedLyrics = syncedLyricsRaw.toString('utf-8').replace(/\r\n/g, '\n'); // same as above
-      prettyLog(`Synced lyrics found: ${syncedLyrics.split('\n')[0]}\n[...]`);
+      return {
+        success: false,
+      };
     }
+
+    const syncedLyrics: Lyrics | null = parser.parseLyrics(
+      syncedLyricsRaw.toString('utf-8').replace(/\r\n/g, '\n'), // same as above
+    );
+    if (!syncedLyrics) {
+      prettyError('Error while reading synced lyrics.');
+      return {
+        success: false,
+      };
+    }
+    const possibleBadLines: number = syncedLyrics.plainLines();
+    if (possibleBadLines) {
+      prettyWarn(
+        `Synced: Found ${possibleBadLines} possible plain or badly parsed lines are aren't meant to be.`,
+      );
+    }
+    prettyLog(`Synced lyrics found: ${syncedLyrics.lyrics[0].string}\n[...]`);
 
     return {
       success: true,

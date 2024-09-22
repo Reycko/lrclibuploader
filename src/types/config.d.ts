@@ -1,14 +1,17 @@
+import '+/lyric';
+import { Lyrics } from '@/lyrics';
+
 export type SongData = {
   trackName: string;
   artistName: string;
-  albumName?: string;
+  albumName: string | null;
   duration: number;
 };
 
 export type Config = {
   data: SongData;
-  plainLyrics: string;
-  syncedLyrics?: string;
+  plainLyrics: Lyrics;
+  syncedLyrics: Lyrics;
 };
 
 export type ConfigResult = {

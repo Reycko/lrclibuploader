@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { SolvedChallenge } from './types/challenge';
+import { SolvedChallenge } from '+/challenge';
 import { prettyLog } from './print';
 
 export function verify_nonce(result: Uint8Array, target: Uint8Array): boolean {
@@ -19,7 +19,8 @@ export function solve(prefix: string, target_hex: string): SolvedChallenge {
 
   console.log('');
   while (true) {
-    if (nonce % 100000 === 0) prettyLog(`Solver - Nonce (~100000): ${nonce}`, true);
+    if (nonce % 100000 === 0)
+      prettyLog(`Solver - Nonce (~100000): ${nonce}`, true);
     const input = `${prefix}${nonce}`;
     const hashed = crypto.createHash('sha256').update(input).digest();
     if (verify_nonce(hashed, target)) {

@@ -1,16 +1,33 @@
 import * as Solver from './solver';
 import { load } from './loader';
-import { ConfigResult } from './types/config';
+import { ConfigResult } from '+/config';
 import { exit } from 'node:process';
-import { Challenge, SolvedChallenge } from './types/challenge';
-import { PublishRequest, PublishResponse } from './types/req';
-import * as Constants from './consts';
+import { Challenge, SolvedChallenge } from '+/challenge';
+import { PublishRequest, PublishResponse } from '+/req';
+import * as Constants from '@/consts';
 import c from 'ansi-colors';
-import { prettyLog, prettyError } from './print';
+import { prettyLog, prettyError, prettyWarn } from './print';
+import * as semver from 'semver';
 
-async function main(): Promise<number> {
+async function checkForUpdates() {
+  const res: Response = await fetch(
+    'https://raw.githubusercontent.com/Reycko/lrclibuploader/master/package.json',
+  );
+  const json = await res.json();
+  if (!json.version) {
+    prettyWarn('Unable to check for updates.');
+    return;
+  }
+  if (semver.gt(Constants.VERSION, json.version)) {
+    prettyWarn(`Latest version is ${c.cyan(json.version)}`);
+  }
+}
+
+async function main(dry: boolean): Promise<number> {
   console.log(c.bold('LRCLIBUploader'));
+  if (dry) prettyLog('--DRY RUN--');
   prettyLog(`Version: ${c.blue(Constants.VERSION.toString())}`);
+  await checkForUpdates();
   const config: ConfigResult = load();
   if (!config.success || !config.config) {
     prettyError('Problem loading config. Aborting.');
@@ -39,11 +56,16 @@ async function main(): Promise<number> {
   const stringBody: string = JSON.stringify({
     trackName: config.config?.data.trackName,
     artistName: config.config?.data.artistName,
-    albumName: config.config?.data.albumName ?? '',
+    albumName: config.config?.data.albumName ?? 'null',
     duration: config.config?.data.duration,
-    plainLyrics: config.config?.plainLyrics,
-    syncedLyrics: config.config?.syncedLyrics ?? '',
+    plainLyrics: config.config?.plainLyrics.toString(),
+    syncedLyrics: config.config?.syncedLyrics.toString(),
   } as PublishRequest);
+
+  if (dry) {
+    prettyLog('--DRY RUN END--');
+    return 0;
+  }
 
   const res: Response = await fetch('https://lrclib.net/api/publish', {
     method: 'POST',
@@ -73,10 +95,14 @@ async function main(): Promise<number> {
   return 0;
 }
 
+// init
 try {
-  main().then((r) => {
-    exit(r);
-  });
+  // TODO: use some sort of dedicated argument parser to add proper cmdline args
+  main(process.argv[process.argv.length - 1].toLowerCase() === 'dry').then(
+    (r) => {
+      exit(r);
+    },
+  );
 } catch {
   exit(1);
 }

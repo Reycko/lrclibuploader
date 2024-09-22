@@ -1,5 +1,6 @@
-import { Version } from './version';
+import 'semver';
+import { version } from '$/package.json';
 
 /* Constants for stuff like version */
 
-export const VERSION: Version = new Version(1, 1, 0);
+export const VERSION: string = version;
