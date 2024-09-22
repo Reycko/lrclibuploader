@@ -12,7 +12,7 @@ Easily upload lyrics to LRCLib.
 1. Install [Node.js](https://nodejs.org/en). Make sure to tick [NPM](https://www.npmjs.com/) in the installer.
 > This app is always tested under the latest LTS version of node.js.
 
-2. Download either a release of the source code, or from the releases page.
+2. Download either a release of the source code, or from the releases (tags) page.
 > Downloading straight from source code might cause issues due to unfinished code. Using the latest release for general use is heavily recommended.
 
 3. Extract the release to a folder.
