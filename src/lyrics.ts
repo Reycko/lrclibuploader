@@ -10,7 +10,7 @@ export class Lyrics {
   }
 
   public toString() {
-    return this.lyrics.join('\n');
+    return this.lyrics.map((l) => l.string).join('\n');
   }
 
   public valueOf(): boolean {
