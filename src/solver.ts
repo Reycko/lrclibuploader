@@ -13,10 +13,7 @@ export function verify_nonce(result: Uint8Array, target: Uint8Array): boolean {
   return true;
 }
 
-export default function solve(
-  prefix: string,
-  target_hex: string,
-): SolvedChallenge {
+export function solve(prefix: string, target_hex: string): SolvedChallenge {
   let nonce: number = 0;
   const target: Uint8Array = Buffer.from(target_hex, 'hex');
 

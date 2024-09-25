@@ -5,6 +5,7 @@ import { prettyError, prettyLog, prettyWarn } from './print';
 import Lyrics from '@/classes/lyrics';
 import * as Parser from '@/classes/parser';
 import { Lyric } from '+/lyric';
+import Arguments from '@/classes/arguments';
 
 function tryLoadFile(loc: fs.PathLike): Buffer | null {
   try {
@@ -19,8 +20,12 @@ export function load(from?: string): ConfigResult {
   try {
     let possibleBadLines: number[];
     const rawData: Buffer | null = tryLoadFile(path.resolve(fd, 'data.json'));
+
     if (!rawData) {
-      throw new Error("Couldn't load data.json, make sure it exists.");
+      prettyError("Couldn't load data.json, make sure it exists.");
+      return {
+        success: false,
+      };
     }
 
     const data: SongData = JSON.parse(rawData.toString('utf-8'));
@@ -30,6 +35,7 @@ export function load(from?: string): ConfigResult {
     const plainLyricsRaw: Buffer | null = tryLoadFile(
       path.resolve(fd, 'plain.txt'),
     );
+
     if (!plainLyricsRaw) {
       prettyError("Couldn't load plain.txt, make sure it exists.");
       return {
@@ -58,7 +64,14 @@ export function load(from?: string): ConfigResult {
         const l: Lyric = plainLyrics.lyrics[i];
         prettyWarn(`{Line ${i}}${+l.time >= 0 ? `[${l.time}] ` : ''}${l.text}`);
       });
+
+      if (Arguments.args.strict) {
+        return {
+          success: false,
+        };
+      }
     }
+
     prettyLog(`Plain text lyrics found: ${plainLyrics.lyrics[0].text}\n[...]`);
 
     const syncedLyricsRaw: Buffer | null = tryLoadFile(
@@ -75,6 +88,7 @@ export function load(from?: string): ConfigResult {
     const syncedLyrics: Lyrics | null = Parser.parseLyrics(
       syncedLyricsRaw.toString('utf-8').replace(/\r\n/g, '\n'), // same as above
     );
+
     if (!syncedLyrics) {
       prettyError('Error while reading synced lyrics.');
       return {
@@ -91,7 +105,14 @@ export function load(from?: string): ConfigResult {
         const l: Lyric = syncedLyrics.lyrics[i];
         prettyWarn(`{Line ${i}}${+l.time >= 0 ? `[${l.time}] ` : ''}${l.text}`);
       });
+
+      if (Arguments.args.strict) {
+        return {
+          success: false,
+        };
+      }
     }
+
     prettyLog(`Synced lyrics found: ${syncedLyrics.lyrics[0].text}\n[...]`);
 
     return {
