@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { SolvedChallenge } from '+/challenge';
+import { SolvedChallenge } from 'challenge';
 import { prettyLog } from './print';
 
 export function verify_nonce(result: Uint8Array, target: Uint8Array): boolean {

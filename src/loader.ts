@@ -1,12 +1,12 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import { SongData, Config } from '+/config';
+import { SongData, Config } from 'config';
 import { prettyError, prettyLog, prettyWarn } from './print';
 import Lyrics from '@/classes/lyrics';
 import * as Parser from '@/classes/parser';
-import { Lyric } from '+/lyric';
+import { Lyric } from 'lyric';
 import Arguments from '@/classes/arguments';
-import { Result } from '+/result';
+import { Result } from 'result';
 
 function tryLoadFile(loc: fs.PathLike): Buffer | null {
   try {

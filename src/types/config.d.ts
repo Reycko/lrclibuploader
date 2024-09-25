@@ -1,4 +1,4 @@
-import '+/lyric';
+import 'lyric';
 import { Lyrics } from '@/classes/lyrics';
 
 export type SongData = {

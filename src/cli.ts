@@ -1,14 +1,14 @@
 import { solve } from './solver';
 import { load } from './loader';
-import { Config } from '+/config';
-import { Challenge, SolvedChallenge } from '+/challenge';
-import { PublishRequest, PublishResponse } from '+/req';
+import { Config } from 'config';
+import { Challenge, SolvedChallenge } from 'challenge';
+import { PublishRequest, PublishResponse } from 'req';
 import * as Constants from '@/consts';
 import c from 'ansi-colors';
 import { prettyLog, prettyError, prettyWarn } from './print';
 import * as semver from 'semver';
 import Arguments from '@/classes/arguments';
-import { Result } from '+/result';
+import { Result } from 'result';
 
 async function checkForUpdates() {
   const res: Response = await fetch(

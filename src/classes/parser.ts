@@ -1,6 +1,6 @@
 import Lyrics from '@/classes/lyrics';
 import Time from '@/classes/time';
-import { Lyric } from '+/lyric';
+import { Lyric } from 'lyric';
 
 export function parseTime(from: number): string {
   const minutes: number = Math.floor(from / 1000 / 60) % 60;

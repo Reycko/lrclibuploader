@@ -1,5 +1,5 @@
 import * as semver from 'semver';
-import { version } from '$/package.json';
+import { version } from '@/../package.json';
 
 /* Constants for stuff like version */
 

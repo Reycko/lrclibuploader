@@ -1,4 +1,4 @@
-import { Lyric } from '+/lyric';
+import { Lyric } from 'lyric';
 /**
  * Simple container class for full lyrics
  */
