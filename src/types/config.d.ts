@@ -13,8 +13,3 @@ export type Config = {
   plainLyrics: Lyrics;
   syncedLyrics: Lyrics;
 };
-
-export type ConfigResult = {
-  success: boolean;
-  config?: Config;
-};

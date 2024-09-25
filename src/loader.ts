@@ -1,11 +1,12 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import { ConfigResult, SongData } from '+/config';
+import { SongData, Config } from '+/config';
 import { prettyError, prettyLog, prettyWarn } from './print';
 import Lyrics from '@/classes/lyrics';
 import * as Parser from '@/classes/parser';
 import { Lyric } from '+/lyric';
 import Arguments from '@/classes/arguments';
+import { Result } from '+/result';
 
 function tryLoadFile(loc: fs.PathLike): Buffer | null {
   try {
@@ -15,7 +16,7 @@ function tryLoadFile(loc: fs.PathLike): Buffer | null {
   }
 }
 
-export function load(from?: string): ConfigResult {
+export function load(from?: string): Result<Config> {
   const fd = from ? from : path.resolve(__dirname, '..', 'data');
   try {
     let possibleBadLines: number[];
