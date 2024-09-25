@@ -118,7 +118,7 @@ export function load(from?: string): Result<Config> {
 
     return {
       success: true,
-      config: {
+      result: {
         data: data,
         plainLyrics: plainLyrics,
         syncedLyrics: syncedLyrics,

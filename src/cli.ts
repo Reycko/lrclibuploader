@@ -1,6 +1,6 @@
 import { solve } from './solver';
 import { load } from './loader';
-import { ConfigResult } from '+/config';
+import { Config } from '+/config';
 import { Challenge, SolvedChallenge } from '+/challenge';
 import { PublishRequest, PublishResponse } from '+/req';
 import * as Constants from '@/consts';
@@ -8,6 +8,7 @@ import c from 'ansi-colors';
 import { prettyLog, prettyError, prettyWarn } from './print';
 import * as semver from 'semver';
 import Arguments from '@/classes/arguments';
+import { Result } from '+/result';
 
 async function checkForUpdates() {
   const res: Response = await fetch(
@@ -28,8 +29,8 @@ export async function run(): Promise<number> {
   if (Arguments.args.dryRun) prettyLog('--DRY RUN--');
   prettyLog(`Version: ${c.blue(Constants.VERSION.toString())}`);
   await checkForUpdates();
-  const config: ConfigResult = load();
-  if (!config.success || !config.config) {
+  const config: Result<Config> = load();
+  if (!config.success || !config.result) {
     prettyError('Problem loading config. Aborting.');
     return 1;
   }
@@ -38,9 +39,9 @@ export async function run(): Promise<number> {
     prettyLog('--DRY RUN END--');
     prettyLog('What would have been sent:');
     prettyLog('---PLAIN---');
-    prettyLog(config.config?.plainLyrics.toString());
+    prettyLog(config.result?.plainLyrics.toString());
     prettyLog('---SYNCED---');
-    prettyLog(config.config?.syncedLyrics.toString());
+    prettyLog(config.result?.syncedLyrics.toString());
 
     return 0;
   }
@@ -65,12 +66,12 @@ export async function run(): Promise<number> {
   const challengeResult: string = `${solvedChallenge.prefix}:${solvedChallenge.nonce}`;
 
   const stringBody: string = JSON.stringify({
-    trackName: config.config?.data.trackName,
-    artistName: config.config?.data.artistName,
-    albumName: config.config?.data.albumName ?? 'null',
-    duration: config.config?.data.duration,
-    plainLyrics: config.config?.plainLyrics.toString(),
-    syncedLyrics: config.config?.syncedLyrics.toString(),
+    trackName: config.result?.data.trackName,
+    artistName: config.result?.data.artistName,
+    albumName: config.result?.data.albumName ?? 'null',
+    duration: config.result?.data.duration,
+    plainLyrics: config.result?.plainLyrics.toString(),
+    syncedLyrics: config.result?.syncedLyrics.toString(),
   } as PublishRequest);
 
   const res: Response = await fetch('https://lrclib.net/api/publish', {
