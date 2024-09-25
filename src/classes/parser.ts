@@ -1,4 +1,4 @@
-import Lyrics from '@/lyrics';
+import Lyrics from '@/classes/lyrics';
 import Time from '@/classes/time';
 import { Lyric } from '+/lyric';
 

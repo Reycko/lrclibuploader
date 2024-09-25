@@ -1,4 +1,4 @@
-import * as Solver from './solver';
+import solve from './solver';
 import { load } from './loader';
 import { ConfigResult } from '+/config';
 import { exit } from 'node:process';
@@ -55,7 +55,7 @@ async function main(dry: boolean): Promise<number> {
     return 1;
   }
 
-  const solvedChallenge: SolvedChallenge = Solver.solve(
+  const solvedChallenge: SolvedChallenge = solve(
     challenge.prefix,
     challenge.target,
   );
