@@ -34,6 +34,17 @@ async function main(dry: boolean): Promise<number> {
     return 1;
   }
 
+  if (dry) {
+    prettyLog('--DRY RUN END--');
+    prettyLog('What would have been sent:');
+    prettyLog('---PLAIN---');
+    prettyLog(config.config?.plainLyrics.toString());
+    prettyLog('---SYNCED---');
+    prettyLog(config.config?.syncedLyrics.toString());
+
+    return 0;
+  }
+
   prettyLog('Requesting challenge.');
   const challenge: Challenge = (await (
     await fetch('https://lrclib.net/api/request-challenge', { method: 'POST' })
@@ -61,11 +72,6 @@ async function main(dry: boolean): Promise<number> {
     plainLyrics: config.config?.plainLyrics.toString(),
     syncedLyrics: config.config?.syncedLyrics.toString(),
   } as PublishRequest);
-
-  if (dry) {
-    prettyLog('--DRY RUN END--');
-    return 0;
-  }
 
   const res: Response = await fetch('https://lrclib.net/api/publish', {
     method: 'POST',
