@@ -9,11 +9,11 @@ export default class Lyrics {
     this.lyrics = lyrics;
   }
 
-  public toString() {
+  public toString(): string {
     //return this.lyrics.map((l) => (l.time < 0 ? l.text : `[${l.time.toString()}] `)).join('\n');
-    return this.lyrics.map((l) =>
-      +l.time < 0 ? l.text : `[${l.time}] ${l.text}`,
-    );
+    return this.lyrics
+      .map((l) => (+l.time < 0 ? l.text : `[${l.time}] ${l.text}`))
+      .join('\n');
   }
 
   public valueOf(): boolean {
