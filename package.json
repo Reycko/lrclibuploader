@@ -6,7 +6,8 @@
     "test": "ts-node -r tsconfig-paths/register .",
     "test:dry": "ts-node -r tsconfig-paths/register . -d",
     "build": "tsc",
-    "start": "node ./dist/index.js"
+    "start": "node ./dist/index.js",
+    "start:dry": "node ./dist/index.js -d"
   },
   "keywords": [],
   "author": "",
