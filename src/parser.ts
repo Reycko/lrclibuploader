@@ -1,4 +1,5 @@
-import { Lyrics } from '@/lyrics';
+import Lyrics from '@/lyrics';
+import Time from '@/classes/time';
 import { Lyric } from '+/lyric';
 
 export function parseTime(from: number): string {
@@ -13,22 +14,17 @@ export function parseTime(from: number): string {
 export function parseLyric(raw: string): Lyric {
   const regex: RegExpExecArray | null =
     /\[([0-9]{1,2}):([0-9]{1,2})\.([0-9]{1,4})\](.*)/g.exec(raw);
-  if (!regex) return { text: raw, time: 0, synced: false, string: raw };
+  if (!regex) return { text: raw, time: new Time(-1) };
 
   const [, rawMinutes, rawSeconds, rawMs, rawText] = regex;
-  const [minutes, seconds, ms, text] = [
-    parseInt(rawMinutes),
-    parseInt(rawSeconds),
-    parseInt(rawMs.padEnd(4, '0')),
+  const [text, time] = [
     rawText.trim(),
+    new Time(`${rawMinutes}:${rawSeconds}.${rawMs}`),
   ];
-  /* eslint-disable-next-line prettier/prettier */ /* < For readability */
-  const time = (minutes * 1000 * 60) + (seconds * 1000) + ms;
+
   return {
     text,
     time,
-    synced: true,
-    string: `[${parseTime(time)}] ${text}`,
   };
 }
 

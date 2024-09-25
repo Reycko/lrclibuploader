@@ -2,7 +2,7 @@ import * as path from 'node:path';
 import * as fs from 'node:fs';
 import { ConfigResult, SongData } from '+/config';
 import { prettyError, prettyLog, prettyWarn } from './print';
-import { Lyrics } from '@/lyrics';
+import Lyrics from '@/lyrics';
 import * as parser from './parser';
 
 function tryLoadFile(loc: fs.PathLike): Buffer | null {
@@ -52,7 +52,7 @@ export function load(from?: string): ConfigResult {
         );
       }
       prettyLog(
-        `Plain text lyrics found: ${plainLyrics.lyrics[0].string}\n[...]`,
+        `Plain text lyrics found: ${plainLyrics.lyrics[0].text}\n[...]`,
       );
     }
 
@@ -82,7 +82,7 @@ export function load(from?: string): ConfigResult {
         `Synced: Found ${possibleBadLines} possible plain or badly parsed lines are aren't meant to be.`,
       );
     }
-    prettyLog(`Synced lyrics found: ${syncedLyrics.lyrics[0].string}\n[...]`);
+    prettyLog(`Synced lyrics found: ${syncedLyrics.lyrics[0].text}\n[...]`);
 
     return {
       success: true,

@@ -2,7 +2,7 @@ import { Lyric } from '+/lyric';
 /**
  * Simple container class for full lyrics
  */
-export class Lyrics {
+export default class Lyrics {
   public lyrics: Lyric[];
 
   constructor(lyrics: Lyric[]) {
@@ -10,7 +10,10 @@ export class Lyrics {
   }
 
   public toString() {
-    return this.lyrics.map((l) => l.string).join('\n');
+    //return this.lyrics.map((l) => (l.time < 0 ? l.text : `[${l.time.toString()}] `)).join('\n');
+    return this.lyrics.map((l) =>
+      +l.time < 0 ? l.text : `[${l.time}] ${l.text}`,
+    );
   }
 
   public valueOf(): boolean {
@@ -20,7 +23,7 @@ export class Lyrics {
   public syncedLines(): number {
     let r = 0;
     this.lyrics.map((v) => {
-      if (v.synced) r++;
+      if (+v.time >= 0) r++;
     });
 
     return r;
@@ -29,7 +32,7 @@ export class Lyrics {
   public plainLines(): number {
     let r = 0;
     this.lyrics.map((v) => {
-      if (!v.synced) r++;
+      if (+v.time < 0) r++;
     });
 
     return r;
