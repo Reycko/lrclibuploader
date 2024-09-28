@@ -1,4 +1,6 @@
-export type Result<T> = {
-  success: boolean;
-  result?: T;
-};
+declare namespace Utils {
+  export type Result<T> = {
+    success: boolean;
+    result?: T;
+  };
+}

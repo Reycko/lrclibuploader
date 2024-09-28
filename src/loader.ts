@@ -5,8 +5,6 @@ import { prettyError, prettyLog, prettyWarn } from './print';
 import Lyrics from '@/classes/lyrics';
 import * as Parser from '@/classes/parser';
 import { Lyric } from 'lyric';
-import Arguments from '@/classes/arguments';
-import { Result } from 'result';
 
 function tryLoadFile(loc: fs.PathLike): Buffer | null {
   try {
@@ -16,7 +14,7 @@ function tryLoadFile(loc: fs.PathLike): Buffer | null {
   }
 }
 
-export function load(from?: string): Result<Config> {
+export function load(from?: string): Utils.Result<Config> {
   const fd = from ? from : path.resolve(__dirname, '..', 'data');
   try {
     let possibleBadLines: number[];
@@ -66,7 +64,7 @@ export function load(from?: string): Result<Config> {
         prettyWarn(`{Line ${i}}${+l.time >= 0 ? `[${l.time}] ` : ''}${l.text}`);
       });
 
-      if (Arguments.args.strict) {
+      if (Arguments.Reader.args.strict) {
         return {
           success: false,
         };
@@ -107,7 +105,7 @@ export function load(from?: string): Result<Config> {
         prettyWarn(`{Line ${i}}${+l.time >= 0 ? `[${l.time}] ` : ''}${l.text}`);
       });
 
-      if (Arguments.args.strict) {
+      if (Arguments.Reader.args.strict) {
         return {
           success: false,
         };

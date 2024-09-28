@@ -1,5 +1,5 @@
 import 'lyric';
-import { Lyrics } from '@/classes/lyrics';
+import Lyrics from '@/classes/lyrics';
 
 export type SongData = {
   trackName: string;

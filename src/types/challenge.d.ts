@@ -1,9 +1,11 @@
-export type Challenge = {
-  prefix: string;
-  target: string;
-};
+declare namespace LRC {
+  export type Challenge = {
+    prefix: string;
+    target: string;
+  };
 
-export type SolvedChallenge = {
-  prefix: string;
-  nonce: number;
-};
+  export type SolvedChallenge = {
+    prefix: string;
+    nonce: number;
+  };
+}

@@ -1,14 +1,10 @@
 import { solve } from './solver';
 import { load } from './loader';
 import { Config } from 'config';
-import { Challenge, SolvedChallenge } from 'challenge';
-import { PublishRequest, PublishResponse } from 'req';
 import * as Constants from '@/consts';
 import c from 'ansi-colors';
 import { prettyLog, prettyError, prettyWarn } from './print';
 import * as semver from 'semver';
-import Arguments from '@/classes/arguments';
-import { Result } from 'result';
 
 async function checkForUpdates() {
   const res: Response = await fetch(
@@ -26,16 +22,16 @@ async function checkForUpdates() {
 
 export async function run(): Promise<number> {
   console.log(c.bold('LRCLIBUploader'));
-  if (Arguments.args.dryRun) prettyLog('--DRY RUN--');
+  if (Arguments.Reader.args.dryRun) prettyLog('--DRY RUN--');
   prettyLog(`Version: ${c.blue(Constants.VERSION.toString())}`);
   await checkForUpdates();
-  const config: Result<Config> = load();
+  const config: Utils.Result<Config> = load();
   if (!config.success || !config.result) {
     prettyError('Problem loading config. Aborting.');
     return 1;
   }
 
-  if (Arguments.args.dryRun) {
+  if (Arguments.Reader.args.dryRun) {
     prettyLog('--DRY RUN END--');
     prettyLog('What would have been sent:');
     prettyLog('---PLAIN---');
@@ -47,16 +43,16 @@ export async function run(): Promise<number> {
   }
 
   prettyLog('Requesting challenge.');
-  const challenge: Challenge = (await (
+  const challenge: LRC.Challenge = (await (
     await fetch('https://lrclib.net/api/request-challenge', { method: 'POST' })
-  ).json()) as Challenge;
+  ).json()) as LRC.Challenge;
 
   if (!challenge.prefix || !challenge.target) {
     console.error('Server gave us an invalid prefix or target.');
     return 1;
   }
 
-  const solvedChallenge: SolvedChallenge = solve(
+  const solvedChallenge: LRC.SolvedChallenge = solve(
     challenge.prefix,
     challenge.target,
   );
@@ -72,7 +68,7 @@ export async function run(): Promise<number> {
     duration: config.result?.data.duration,
     plainLyrics: config.result?.plainLyrics.toString(),
     syncedLyrics: config.result?.syncedLyrics.toString(),
-  } as PublishRequest);
+  } as LRC.Requests.Publish);
 
   const res: Response = await fetch('https://lrclib.net/api/publish', {
     method: 'POST',
@@ -91,7 +87,7 @@ export async function run(): Promise<number> {
     );
     const text: string = await res.text();
     try {
-      console.log(JSON.parse(text) as PublishResponse);
+      console.log(JSON.parse(text) as LRC.Responses.Publish);
     } catch {
       console.log(text);
     }

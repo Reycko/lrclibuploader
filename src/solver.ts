@@ -1,5 +1,4 @@
 import * as crypto from 'crypto';
-import { SolvedChallenge } from 'challenge';
 import { prettyLog } from './print';
 
 export function verify_nonce(result: Uint8Array, target: Uint8Array): boolean {
@@ -13,7 +12,7 @@ export function verify_nonce(result: Uint8Array, target: Uint8Array): boolean {
   return true;
 }
 
-export function solve(prefix: string, target_hex: string): SolvedChallenge {
+export function solve(prefix: string, target_hex: string): LRC.SolvedChallenge {
   let nonce: number = 0;
   const target: Uint8Array = Buffer.from(target_hex, 'hex');
 
